@@ -2,6 +2,8 @@ import random
 
 import numpy as np
 
+from scheduler import *
+
 
 def gradient(f, coord, h=1e-5):
     f_left = np.zeros(coord.shape)
@@ -18,7 +20,7 @@ def gradient(f, coord, h=1e-5):
     return grad
 
 
-def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50, eps=1e-5):
+def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50, eps=1e-5, scheduler=EmptyScheduler()):
     meta = {
         "gradient_call_count": 0,
         "function_call_count": 0,
@@ -42,6 +44,7 @@ def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50,
             break
 
         coord = coord - lr * gradient(f, coord)
+        lr = scheduler.decay_lr(i, lr)
 
         meta["gradient_call_count"] += 1
 
