@@ -26,7 +26,6 @@ def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50,
     }
 
     coord = np.random.rand(dim) * random.randint(-scale, scale)
-    print(coord)
 
     for i in range(iterations):
         meta["points"] = np.append(
