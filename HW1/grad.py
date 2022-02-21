@@ -4,18 +4,18 @@ import numpy as np
 
 
 def gradient(f, coord, h=1e-5):
-    grad_list = np.array([], dtype=np.float64)
-    for index, x in enumerate(coord):
-        f_left = coord.copy()
-        f_left[index] = f(x - h)
+    f_left = np.zeros(coord.shape)
+    f_right = np.zeros(coord.shape)
+    for i in range(coord.shape[0]):
+        h_vec = np.zeros(coord.shape)
+        h_vec[i] = h
 
-        f_right = coord.copy()
-        f_right[index] = f(x + h)
+        f_left[i] = f(coord - h_vec)
+        f_right[i] = f(coord + h_vec)
 
-        grad_2d = (f_right - f_left) / (2 * h)
-        grad_list = np.concatenate((grad_list, grad_2d))
+    grad = (f_right - f_left) / (2 * h)
 
-    return np.array(grad_list, dtype=np.float64)
+    return grad
 
 
 def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50, eps=1e-5):
@@ -30,7 +30,7 @@ def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50,
     for i in range(iterations):
         meta["points"] = np.append(
             meta["points"],
-            np.array([coord, f(coord)], dtype=np.float64).reshape(1, 2),
+            np.array([coord, f(coord)]).reshape(1, 2),
             axis=0
         )
 
