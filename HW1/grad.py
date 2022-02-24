@@ -21,7 +21,7 @@ def gradient(f, coord, h=1e-5):
     return grad
 
 
-def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50, eps=1e-5, scheduler=EmptyScheduler(),
+def gradient_descent(f, dim, lr=0.1, iterations=10000, scale=100, check_batch=50, eps=1e-5, scheduler=EmptyScheduler(),
                      coord_relaxer=BasicCoordRelaxer()):
     meta = {
         "gradient_call_count": 0,
