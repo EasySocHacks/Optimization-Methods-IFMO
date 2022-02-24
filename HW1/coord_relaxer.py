@@ -15,40 +15,41 @@ class BasicCoordRelaxer(CoordRelaxer):
 
 
 class LinearCoordRelaxer(CoordRelaxer):
-    def __init__(self, alpha):
+    def __init__(self, f, alpha, eps):
+        self.f = f
         self.alpha = alpha
+        self.eps = eps
         self.phi = (np.sqrt(5) + 1) / 2
 
     def find_golden_ratio_point(self, a, b):
         return b - (b - a) / self.phi, a + (b - a) / self.phi
 
     # noinspection PyUnresolvedReferences
-    @staticmethod
-    def golden_ratio_method(a, b):
+    def golden_ratio_method(self, a, b):
         function_call_count = np.array([0])
 
-        x1, x2 = find_golden_ratio_point(a, b)
+        x1, x2 = self.find_golden_ratio_point(a, b)
 
-        y1 = f(x1)
-        y2 = f(x2)
+        y1 = self.f(x1)
+        y2 = self.f(x2)
 
-        while np.abs(b - a) > eps:
+        while np.abs(b - a) > self.eps:
             if y1 < y2:
                 b = x2
 
                 x2 = x1
-                x1 = find_golden_ratio_point(a, b)[0]
+                x1 = self.find_golden_ratio_point(a, b)[0]
 
                 y2 = y1
-                y1 = f(x1)
+                y1 = self.f(x1)
             else:
                 a = x1
 
                 x1 = x2
-                x2 = find_golden_ratio_point(a, b)[1]
+                x2 = self.find_golden_ratio_point(a, b)[1]
 
                 y1 = y2
-                y2 = f(x2)
+                y2 = self.f(x2)
 
             function_call_count += 1
 
