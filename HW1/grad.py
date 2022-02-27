@@ -40,10 +40,11 @@ def gradient_descent(f, dim, lr=0.1, iterations=10000, scale=100, check_batch=50
 
         meta["function_call_count"] += 1
 
-        avg_changes = np.average(
-            np.abs(np.average(meta["points"][-check_batch:-1, 1]) - meta["points"][-check_batch:-1, 1]))
-        if meta["points"].shape[0] > check_batch and avg_changes < eps:
-            break
+        if meta["points"].shape[0] > check_batch:
+            avg_changes = np.average(
+                np.abs(np.average(meta["points"][-check_batch:-1, 1]) - meta["points"][-check_batch:-1, 1]))
+            if avg_changes < eps:
+                break
 
         (coord, _), relax_meta = coord_relaxer.relax(coord, lr, gradient(f, coord))
         meta["function_call_count"] += relax_meta["function_call_count"]
