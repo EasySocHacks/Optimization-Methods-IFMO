@@ -43,7 +43,7 @@ def gradient_descent(f,
         (coord, _), relax_meta = coord_relaxer.relax(coord, lr, gradient(f, coord))
         meta["function_call_count"] += relax_meta["function_call_count"]
 
-        lr = scheduler.decay_lr(i, lr)
+        lr = scheduler.decay_lr(i + 1, lr)
 
         meta["gradient_call_count"] += 1
 
