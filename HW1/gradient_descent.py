@@ -18,7 +18,6 @@ def gradient_descent(f,
                      coord_relaxer=BasicCoordRelaxer()):
     if coord is None:
         coord = np.random.rand(dim) * random.randint(-100, 100)
-
     meta = {
         "gradient_call_count": 0,
         "function_call_count": 0,
@@ -41,7 +40,10 @@ def gradient_descent(f,
                 break
 
         (coord, _), relax_meta = coord_relaxer.relax(coord, lr, gradient(f, coord))
+
         meta["function_call_count"] += relax_meta["function_call_count"]
+        if "gradient_call_count" in relax_meta:
+            meta["gradient_call_count"] += relax_meta["gradient_call_count"]
 
         lr = scheduler.decay_lr(i + 1, lr)
 

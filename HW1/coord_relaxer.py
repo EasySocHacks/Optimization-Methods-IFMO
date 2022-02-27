@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-
 import numpy as np
+
+from HW1.step_length_computer import NoStepLengthComputer
 
 
 class CoordRelaxer(ABC):
@@ -15,7 +16,8 @@ class BasicCoordRelaxer(CoordRelaxer):
 
 
 class LinearCoordRelaxer(CoordRelaxer):
-    def __init__(self, f, alpha, eps):
+    def __init__(self, f, alpha, eps, step_length_computer=NoStepLengthComputer()):
+        self.step_length_computer = step_length_computer
         self.f = f
         self.alpha = alpha
         self.eps = eps
@@ -75,4 +77,8 @@ class LinearCoordRelaxer(CoordRelaxer):
         return (ans, self.f(ans)), meta
 
     def relax(self, coord, lr, gradient):
-        return self.golden_ratio_method(coord, coord - self.alpha * lr * gradient)
+        alpha, meta_wolfe = self.step_length_computer.compute_length(coord, -gradient)
+        result, meta_relax = self.golden_ratio_method(coord, coord - lr * gradient * alpha)
+        meta_wolfe["function_call_count"] += meta_relax["function_call_count"]
+
+        return result, meta_wolfe
