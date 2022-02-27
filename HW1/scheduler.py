@@ -33,6 +33,6 @@ class StepScheduler(Scheduler):
 
     def decay_lr(self, iteration, lr):
         if iteration % self.decay_period == 0:
-            return lr - self.decay_step
+            return max(lr - self.decay_step, 0)
         else:
             return lr
