@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 def draw_2D(f, points=None, scale=100, rate=100):
     xs = np.linspace(-scale, scale, rate)
-    ys = list(map(f, xs))
+    ys = f([xs])
 
     if points is not None:
         plt.plot(points[:, 0], points[:, 1], 'r.')
