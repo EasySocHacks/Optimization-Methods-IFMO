@@ -21,7 +21,7 @@ def gradient(f, coord, h=1e-5):
     return grad
 
 
-def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50, eps=1e-5, scheduler=EmptyScheduler(),
+def gradient_descent(f, dim, lr=0.1, iterations=10000, scale=100, check_batch=50, eps=1e-5, scheduler=EmptyScheduler(),
                      coord_relaxer=BasicCoordRelaxer()):
     meta = {
         "gradient_call_count": 0,
@@ -45,7 +45,9 @@ def gradient_descent(f, dim, lr=0.1, iterations=1000, scale=100, check_batch=50,
         if meta["points"].shape[0] > check_batch and avg_changes < eps:
             break
 
-        coord = coord_relaxer.relax(coord, lr, gradient(f, coord))
+        (coord, _), relax_meta = coord_relaxer.relax(coord, lr, gradient(f, coord))
+        meta["function_call_count"] += relax_meta["function_call_count"]
+
         lr = scheduler.decay_lr(i, lr)
 
         meta["gradient_call_count"] += 1

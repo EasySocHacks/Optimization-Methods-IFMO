@@ -11,7 +11,7 @@ class CoordRelaxer(ABC):
 
 class BasicCoordRelaxer(CoordRelaxer):
     def relax(self, coord, lr, gradient):
-        return coord - lr * gradient
+        return (coord - lr * gradient, None), {"function_call_count": 0}
 
 
 class LinearCoordRelaxer(CoordRelaxer):
@@ -25,41 +25,54 @@ class LinearCoordRelaxer(CoordRelaxer):
         return b - (b - a) / self.phi, a + (b - a) / self.phi
 
     # noinspection PyUnresolvedReferences
-    def golden_ratio_method(self, a, b):
-        function_call_count = np.array([0])
+    def golden_ratio_method(self, from_coord, to_coord):
+        ans = np.array([])
 
-        x1, x2 = self.find_golden_ratio_point(a, b)
+        meta = {
+            "function_call_count": 0
+        }
 
-        y1 = self.f(x1)
-        y2 = self.f(x2)
+        for idx, segment in enumerate(np.column_stack((from_coord, to_coord))):
+            a = np.copy(from_coord)
+            b = np.copy(to_coord)
 
-        while np.abs(b - a) > self.eps:
+            grp_x1, grp_x2 = self.find_golden_ratio_point(segment[0], segment[1])
+
+            x1 = np.copy(a)
+            x1[idx] = grp_x1
+            x2 = np.copy(b)
+            x2[idx] = grp_x2
+
+            y1 = self.f(x1)
+            y2 = self.f(x2)
+            meta["function_call_count"] += 2
+
+            while np.abs(a[idx] - b[idx]) > self.eps:
+                if y1 < y2:
+                    b[idx] = x2[idx]
+
+                    x2[idx] = x1[idx]
+                    x1[idx] = self.find_golden_ratio_point(a[idx], b[idx])[0]
+
+                    y2 = y1
+                    y1 = self.f(x1)
+                else:
+                    a[idx] = x1[idx]
+
+                    x1[idx] = x2[idx]
+                    x2[idx] = self.find_golden_ratio_point(a[idx], b[idx])[1]
+
+                    y1 = y2
+                    y2 = self.f(x2)
+
+                meta["function_call_count"] += 1
+
             if y1 < y2:
-                b = x2
-
-                x2 = x1
-                x1 = self.find_golden_ratio_point(a, b)[0]
-
-                y2 = y1
-                y1 = self.f(x1)
+                ans = np.append(ans, x1[idx])
             else:
-                a = x1
+                ans = np.append(ans, x2[idx])
 
-                x1 = x2
-                x2 = self.find_golden_ratio_point(a, b)[1]
-
-                y1 = y2
-                y2 = self.f(x2)
-
-            function_call_count += 1
-
-        if y1 < y2:
-            return x1, y1, function_call_count
-        else:
-            return x2, y2, function_call_count
+        return (ans, self.f(ans)), meta
 
     def relax(self, coord, lr, gradient):
-        vectorize = np.vectorize(self.golden_ratio_method)
-        new_coord, _, golden_ratio_function_call_count = vectorize(coord, coord - self.alpha * lr * gradient)
-
-        return new_coord
+        return self.golden_ratio_method(coord, coord - self.alpha * lr * gradient)
