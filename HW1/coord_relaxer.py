@@ -16,10 +16,9 @@ class BasicCoordRelaxer(CoordRelaxer):
 
 
 class LinearCoordRelaxer(CoordRelaxer):
-    def __init__(self, f, alpha, eps, step_length_computer=NoStepLengthComputer()):
+    def __init__(self, f, eps, step_length_computer=NoStepLengthComputer()):
         self.step_length_computer = step_length_computer
         self.f = f
-        self.alpha = alpha
         self.eps = eps
         self.phi = (np.sqrt(5) + 1) / 2
 
