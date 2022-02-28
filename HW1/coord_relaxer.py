@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 import numpy as np
 
 from HW1.step_length_computer import NoStepLengthComputer
@@ -11,22 +12,47 @@ class CoordRelaxer(ABC):
 
 
 class BasicCoordRelaxer(CoordRelaxer):
+    """
+    A default coordinates relaxer.
+    """
     def relax(self, coord, lr, gradient):
         return (coord - lr * gradient, None), {"function_call_count": 0}
 
 
 class LinearCoordRelaxer(CoordRelaxer):
+    """
+    A coordinate relaxer, that computing new coordinates using a linear method.
+    """
     def __init__(self, f, eps, step_length_computer=NoStepLengthComputer()):
+        """
+        :param f: a function, that using in gradient descent
+        :param eps: a linear method accuracy threshold
+        :param step_length_computer: a method to compute 'alpha' step in linear method
+        """
         self.step_length_computer = step_length_computer
         self.f = f
         self.eps = eps
         self.phi = (np.sqrt(5) + 1) / 2
 
     def find_golden_ratio_point(self, a, b):
+        """
+        Finding point on the segment [a, b] for linear method called golder ratio method.
+
+        :param a: left segment side
+        :param b: right segment side
+        :return: p1, p2 \in [a, b]
+        """
         return b - (b - a) / self.phi, a + (b - a) / self.phi
 
     # noinspection PyUnresolvedReferences
     def golden_ratio_method(self, from_coord, to_coord):
+        """
+        Implementing golden ratio method.
+
+        :param from_coord: left segment border
+        :param to_coord:
+        :return:
+        """
         ans = np.array([])
 
         meta = {
