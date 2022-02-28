@@ -16,6 +16,25 @@ def gradient_descent(f,
                      eps=1e-5,
                      scheduler=EmptyScheduler(),
                      coord_relaxer=BasicCoordRelaxer()):
+    """
+    Implementing gradient descent algorithm.
+
+    coordinates 'coord' generates automatically in case its sets to None, or you can set it by yourself otherwise.
+
+    The method stops either then 'iterations' count reached or the last 'check_batch' point's of current
+    gradient descent result returns result from function 'f' within the 'eps' error.
+
+    :param f: a function to do gradient descent on
+    :param dim: dimension of function 'f' working with
+    :param coord: optional coordinates setter
+    :param lr: gradient descent learning rate
+    :param iterations: gradient descent maximum iteration count
+    :param check_batch: a batch size to check stop condition
+    :param eps: 'check_batch' points error to check stop condition
+    :param scheduler: a scheduler to schedule learning rate
+    :param coord_relaxer: a relaxer to change coordinates over iterations
+    :return: a local minimum astimation
+    """
     if coord is None:
         coord = np.random.rand(dim) * random.randint(-100, 100)
     meta = {

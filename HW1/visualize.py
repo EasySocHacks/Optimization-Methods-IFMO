@@ -3,6 +3,17 @@ from matplotlib import pyplot as plt
 
 
 def draw_2D(f, points=None, scale=100, rate=100):
+    """
+    Drawing chart of a 2D function 'f'.
+
+    Furthermore, drawing gradient descent work result in case points is not None
+
+    :param f: a 2D function to draw
+    :param points: optional. gradient descent work result
+    :param scale: chart axis scale to draw
+    :param rate: count of x-axis points to build f chart.
+    :return: Nothing
+    """
     xs = np.linspace(-scale, scale, rate)
     ys = np.array(list(map(lambda x: f([x]), xs)))
 
@@ -14,6 +25,17 @@ def draw_2D(f, points=None, scale=100, rate=100):
 
 
 def draw_3D(f, points=None, scale=100, rate=100):
+    """
+    Drawing chart of a 3D function 'f'.
+
+    Furthermore, drawing gradient descent work result in case points is not None
+
+    :param f: a 3D function to draw
+    :param points: optional. gradient descent work result
+    :param scale: chart axis scale to draw
+    :param rate: count of x-axis and y-axis points to build f chart.
+    :return: Nothing
+    """
     t = np.linspace(-scale, scale, rate)
     X, Y = np.meshgrid(t, t)
     ax = plt.figure().add_subplot(projection='3d')

@@ -65,8 +65,8 @@ class LinearCoordRelaxer(CoordRelaxer):
         """
         Implementing golden ratio method.
 
-        :param from_coord: left segment border
-        :param to_coord:
+        :param from_coord: from segment border n dim
+        :param to_coord: to segment border n dim
         :return:
         """
         ans = np.array([])
