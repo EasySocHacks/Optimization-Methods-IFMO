@@ -6,12 +6,30 @@ from HW1.gradient import gradient
 
 
 class StepLengthComputer(ABC):
+    """
+    Class for computing segment due to linear search
+    """
+
     @abstractmethod
-    def compute_length(self, coord, direction): pass
+    def compute_length(self, coord, direction):
+        """
+        Computes length of segment where linear search would be performed
+        :param coord: current point of gradient search
+        :param direction: direction where the optimal value should be searched
+        :return: the second value of segment <'coord', 'coord' + t * 'direction'> where linear search would be run
+        """
+        pass
 
 
 class NoStepLengthComputer(StepLengthComputer):
+    """
+    Implementing computing fixed-scaled length of segment
+    """
+
     def __init__(self, alpha=100):
+        """
+        :param alpha: fixed-scaled coefficient
+        """
         self.alpha = alpha
 
     def compute_length(self, coord, direction):
@@ -23,7 +41,16 @@ class NoStepLengthComputer(StepLengthComputer):
 
 
 class WolfeStepLengthComputer(StepLengthComputer):
+    """
+    Implementing computing segment that would satisfy the Wolfe's conditions
+    """
+
     def __init__(self, c1, c2, f):
+        """
+        :param c1: first coefficient
+        :param c2: second coefficient
+        :param f: researching function
+        """
         self.c1 = c1
         self.c2 = c2
         self.f = f

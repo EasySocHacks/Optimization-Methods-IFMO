@@ -45,6 +45,16 @@ def func_scale_result(prev_func, constant=1):
 
 
 def generate_function(dims, inner_constant_scale=100, outer_constant_scale=1, print_debug=False):
+    """
+    Generates random polynomial function of degree<=2 of shape<='dims', where all the coefficients are in absolute bound of
+      'inner_constant_scale' coefficient value, value of invocation is scaled by 'outer_constant_scale' coefficient
+       value, and the function details is printed to the console if 'print_debug' is true
+    :param dims: dimension of function
+    :param inner_constant_scale: polynomial coefficients' scale coefficient
+    :param outer_constant_scale: function value scale coefficient
+    :param print_debug: flag if the function information should be printed to console
+    :return: random polynomial function
+    """
     f = func_zero()
     if print_debug:
         print("0", end="")
