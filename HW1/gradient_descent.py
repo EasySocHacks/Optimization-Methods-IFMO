@@ -33,7 +33,7 @@ def gradient_descent(f,
     :param eps: 'check_batch' points error to check stop condition
     :param scheduler: a scheduler to schedule learning rate
     :param coord_relaxer: a relaxer to change coordinates over iterations
-    :return: a local minimum astimation
+    :return: a local minimum estimation
     """
     if coord is None:
         coord = np.random.rand(dim) * random.randint(-100, 100)
