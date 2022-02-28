@@ -6,8 +6,24 @@ from HW1.step_length_computer import NoStepLengthComputer
 
 
 class CoordRelaxer(ABC):
+    """
+    Class for updating coordinates using in gradient descent after each iteration.
+    """
     @abstractmethod
     def relax(self, coord, lr, gradient):
+        """
+        Using coordinate 'coord', learning rate 'lr' and computed gradient 'gradient' of whatever function 'f'
+        in point 'coord' belongs to iteration 'n' of a gradient descent, compute a new coordinates belongs to
+        'n+1' iteration of the gradient descent.
+
+        'coord' stands for a numpy array with a 'k' dimension.
+        'gradient' stands for a numpy array with a 'k' dimension.
+
+        :param coord: coordinates belongs to n'th gradient's descent iteration
+        :param lr: learning rate belongs to n'th gradient's descent iteration
+        :param gradient: computed gradient of a function in point 'coord'
+        :return: new coordinates belongs to (n+1)'th gradient's descent iteration
+        """
         pass
 
 
