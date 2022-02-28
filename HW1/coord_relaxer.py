@@ -54,8 +54,8 @@ class LinearCoordRelaxer(CoordRelaxer):
         """
         Finding point on the segment [a, b] for linear method called golder ratio method.
 
-        :param a: left segment side
-        :param b: right segment side
+        :param a: left segment side 2 dim
+        :param b: right segment side 2 dim
         :return: p1, p2 \in [a, b]
         """
         return b - (b - a) / self.phi, a + (b - a) / self.phi

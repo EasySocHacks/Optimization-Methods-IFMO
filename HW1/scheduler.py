@@ -60,7 +60,7 @@ class StepScheduler(Scheduler):
     def __init__(self, decay_period, decay_step, lower_bound=0.01):
         """
         :param decay_period: frequency of learning rate decaying, in iterations
-        :param decay_exp: value of relative decreasing
+        :param decay_step: value of absolute decreasing
         :param lower_bound: minimum supposed value for learning rate
         """
         self.lower_bound = lower_bound
