@@ -10,7 +10,7 @@ def func_single(prev_func, i, constant=1):
     :param constant: scale coefficient
     :return: the new function that like f(coordinate)='prev_func'(coordinate)+'constant'*coordinate['i']
     """
-    return lambda coord: prev_func(coord) + coord[i] * constant
+    return lambda coord: np.abs(prev_func(coord) + coord[i] * constant)
 
 
 def func_double(prev_func, i, j, constant=1):
@@ -23,7 +23,7 @@ def func_double(prev_func, i, j, constant=1):
     :param constant: scale coefficient
     :return: the new function that like f(coordinate)='prev_func'(coordinate)+'constant'*coordinate['i']*coordinate['j']
     """
-    return lambda coord: prev_func(coord) + coord[i] * coord[j] * constant
+    return lambda coord: np.abs(prev_func(coord) + coord[i] * coord[j] * constant)
 
 
 def func_zero():
