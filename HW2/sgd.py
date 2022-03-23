@@ -18,13 +18,13 @@ def get_process_memory():
 
 def gd(
         points,
-        error=SquaredErrorCalculator(),
+        error: Error = SquaredErrorCalculator(),
         lr=0.1,
         ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
         iterations=10000,
         check_batch=50,
         eps=1e-5,
-        optimization=DefaultOptimization(),
+        optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
         points,
@@ -41,13 +41,13 @@ def gd(
 
 def sgd(
         points,
-        error=SquaredErrorCalculator(),
+        error: Error = SquaredErrorCalculator(),
         lr=0.1,
         ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
         iterations=10000,
         check_batch=50,
         eps=1e-5,
-        optimization=DefaultOptimization(),
+        optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
         points,
@@ -64,13 +64,13 @@ def sgd(
 
 def normalised_mini(
         points,
-        error=SquaredErrorCalculator(),
+        error: Error = SquaredErrorCalculator(),
         lr=0.1,
         ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
         iterations=10000,
         check_batch=50,
         eps=1e-5,
-        optimization=DefaultOptimization(),
+        optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
         points / np.linalg.norm(points),
