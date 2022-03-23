@@ -10,6 +10,12 @@ from HW2.regression_generator import generate_regression
 from HW2.visualization import visualize_regression_point, visualize_line
 
 
+def get_process_memory():
+    process = psutil.Process(os.getpid())
+    mem_info = process.memory_info()
+    return (mem_info.rss + mem_info.vms + mem_info.shared) / 1024 / 1024
+
+
 def gd(
         points,
         error=SquaredErrorCalculator(),
@@ -91,9 +97,11 @@ def minibatch_gd(
         batch_size=1
 ):
     n = points.shape[0]
+    start_time = datetime.datetime.now()
 
     meta = {
-        "points": np.array([], dtype=np.float64).reshape(0, 2)
+        "points": np.array([], dtype=np.float64).reshape(0, 2),
+        "before": get_process_memory(),
     }
 
     for i in range(iterations):
@@ -113,14 +121,32 @@ def minibatch_gd(
             pid = np.random.randint(0, n)
             point = points[pid]
 
-            error_value_without_square = (ab[0] * points[pid, 0] + ab[1] - points[pid, 1])
-            gradient_a = 2 * error_value_without_square * points[pid, 0]
-            gradient_b = 2 * error_value_without_square
+            gradient_a, gradient_b = optimization.gradient(
+                ab,
+                point,
+                error
+            )
 
-            norm = (gradient_a ** 2 + gradient_b ** 2) ** 0.5
-            ab_grad += np.array([gradient_a, gradient_b]) / norm
+            ab_grad += np.array([gradient_a, gradient_b])
 
         ab += optimization.relax(lr, ab_grad, batch_size)
+
+    def format_bytes(bytes):
+        bytes = 1024 * bytes * 1024
+        if abs(bytes) < 1000:
+            return str(bytes) + "B"
+        elif abs(bytes) < 1e6:
+            return str(round(bytes / 1e3, 2)) + "kB"
+        elif abs(bytes) < 1e9:
+            return str(round(bytes / 1e6, 2)) + "MB"
+        else:
+            return str(round(bytes / 1e9, 2)) + "GB"
+
+    meta["max"] = get_process_memory()
+    meta["after"] = get_process_memory()
+    meta["maximum-after"] = format_bytes(meta["max"] - meta["before"])
+    meta["before-after"] = format_bytes(meta["after"] - meta["before"])
+    meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
 
     return ab, meta
 
