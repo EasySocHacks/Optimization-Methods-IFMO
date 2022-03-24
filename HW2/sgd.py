@@ -5,7 +5,7 @@ import numpy as np
 import psutil
 
 from HW2.error_calculator import SquaredErrorCalculator, Error
-from HW2.optimization import DefaultOptimization, Optimization, RMSPropOptimization
+from HW2.optimization import DefaultOptimization, Optimization
 from HW2.regression_generator import generate_regression
 from HW2.visualization import visualize_regression_point, visualize_line
 
@@ -82,6 +82,7 @@ def normalised_mini(
         check_batch=50,
         eps=1e-5,
         optimization: Optimization = DefaultOptimization(),
+        batch_size=1
 ):
     return minibatch_gd(
         points / np.linalg.norm(points),
@@ -92,7 +93,7 @@ def normalised_mini(
         check_batch,
         eps,
         optimization,
-        1
+        batch_size
     )
 
 
@@ -100,13 +101,15 @@ def minibatch_gd(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
+        ab=None,
         iterations=10000,
         check_batch=50,
         eps=1e-5,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1
 ):
+    if ab is None:
+        ab = np.array([1.0 / len(points), 1.0 / len(points)])
     n = points.shape[0]
     start_time = datetime.datetime.now()
 
@@ -140,7 +143,7 @@ def minibatch_gd(
 
             ab_grad += np.array([gradient_a, gradient_b])
 
-        ab += optimization.relax(lr, ab_grad, batch_size)
+        ab += optimization.relax(lr, ab_grad / batch_size)
 
     meta["max"] = get_process_memory()
     meta["maximum-after"] = meta["max"] - meta["before"]
