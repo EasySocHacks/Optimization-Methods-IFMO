@@ -13,7 +13,20 @@ from HW2.visualization import visualize_regression_point, visualize_line
 def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
+    # TODO: dont work on WIN so return
+    return 1000000
     return (mem_info.rss + mem_info.vms + mem_info.shared) / 1024 / 1024
+
+
+def calc_smape(_ab, _points):
+    smape = 0
+    for _point in _points:
+        y_pr = _ab[0] * _point[0] + _ab[1]
+        if y_pr == 0 and _point[-1] == 0:
+            smape += 0
+        else:
+            smape += np.abs(y_pr - _point[-1]) / (np.abs(y_pr) + np.abs(_point[-1]))
+    return smape / len(_points)
 
 
 def gd(
@@ -144,10 +157,10 @@ def minibatch_gd(
 
     meta["max"] = get_process_memory()
     meta["after"] = get_process_memory()
-    meta["maximum-after"] = format_bytes(meta["max"] - meta["before"])
+    meta["maximum-after"] = meta["max"] - meta["before"]
     meta["before-after"] = format_bytes(meta["after"] - meta["before"])
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
-
+    meta['smape'] = calc_smape(ab, points)
     return ab, meta
 
 
@@ -156,7 +169,7 @@ if __name__ == "__main__":
 
     visualize_regression_point(f, points)
 
-    ab, meta = minibatch_gd(points, optimization=RMSPropOptimization(0.5))
+    ab, meta = minibatch_gd(points)
 
     print(ab)
 
