@@ -13,9 +13,7 @@ from HW2.visualization import visualize_regression_point, visualize_line
 def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
-    # TODO: dont work on WIN so return
-    return 1000000
-    return (mem_info.rss + mem_info.vms + mem_info.shared) / 1024 / 1024
+    return mem_info.rss + mem_info.vms + mem_info.shared
 
 
 def calc_smape(_ab, _points):
@@ -144,21 +142,8 @@ def minibatch_gd(
 
         ab += optimization.relax(lr, ab_grad, batch_size)
 
-    def format_bytes(bytes):
-        bytes = 1024 * bytes * 1024
-        if abs(bytes) < 1000:
-            return str(bytes) + "B"
-        elif abs(bytes) < 1e6:
-            return str(round(bytes / 1e3, 2)) + "kB"
-        elif abs(bytes) < 1e9:
-            return str(round(bytes / 1e6, 2)) + "MB"
-        else:
-            return str(round(bytes / 1e9, 2)) + "GB"
-
     meta["max"] = get_process_memory()
-    meta["after"] = get_process_memory()
     meta["maximum-after"] = meta["max"] - meta["before"]
-    meta["before-after"] = format_bytes(meta["after"] - meta["before"])
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
     meta['smape'] = calc_smape(ab, points)
     return ab, meta

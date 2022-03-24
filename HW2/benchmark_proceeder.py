@@ -5,7 +5,6 @@ from HW2.optimization import DefaultOptimization, Optimization
 
 
 def format_bytes(bytes):
-    bytes
     if abs(bytes) < 1000:
         return str(bytes) + "B"
     elif abs(bytes) < 1e6:
@@ -21,7 +20,7 @@ class BenchmarkStorage:
         self.benchmark_results = []
         self.configs = []
 
-    def add_benchmark_config(self, batch_size: str = 'svd', normalized: bool = False,
+    def add_benchmark_config(self, batch_size: str = 'sgd', normalized: bool = False,
                              optimiser: Optimization = DefaultOptimization(),
                              error: Error = SquaredErrorCalculator()
                              ):
