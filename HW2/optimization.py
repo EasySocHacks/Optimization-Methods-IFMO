@@ -86,7 +86,7 @@ class RMSPropOptimization(Optimization):
 
 
 class AdamOptimization(Optimization):
-    def __init__(self, beta_1=0.9, beta_2=0.999, eps=1e-10):
+    def __init__(self, beta_1=0.9, beta_2=0.999, eps=1e-5):
         self.beta_1 = beta_1
         self.beta_2 = beta_2
         self.eps = eps
@@ -106,7 +106,7 @@ class AdamOptimization(Optimization):
         self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + \
                                      (1 - self.beta_2) * grad ** 2
 
-        grad_plain_sum_norm = self.grad_plain_sum / (1.0 - self.beta_1 ** (self.iteration - 1))
-        grad_square_plain_sum_norm = self.grad_square_plain_sum / (1.0 - self.beta_2 ** (self.iteration - 1))
+        grad_plain_sum_norm = self.grad_plain_sum / (1.0 - np.power(self.beta_1, (self.iteration - 1)) + self.eps)
+        grad_square_plain_sum_norm = self.grad_square_plain_sum / (1.0 - np.power(self.beta_2, (self.iteration - 1)) + self.eps)
 
         return -lr / (np.sqrt(grad_square_plain_sum_norm) + self.eps) * grad_plain_sum_norm
