@@ -9,7 +9,7 @@ class Optimization(ABC):
         pass
 
     @abstractmethod
-    def relax(self, lr, grad, batch_size):
+    def relax(self, lr, grad):
         pass
 
 
@@ -17,80 +17,96 @@ class DefaultOptimization(Optimization):
     def gradient(self, ab, point, error):
         return error.gradient(ab, point)
 
-    def relax(self, lr, grad, batch_size):
-        return -lr * grad / batch_size
+    def relax(self, lr, grad):
+        return -lr * grad
 
 
 class MomentumOptimization(Optimization):
     def __init__(self, beta=0):
         self.beta = beta
 
-        self.last_grad = np.zeros(2)
+        self.grad_plain_sum = np.zeros(2)
 
     def gradient(self, ab, point, error):
-        return self.beta * self.last_grad + (1.0 - self.beta) * error.gradient(ab, point)
+        return error.gradient(ab, point)
 
-    def relax(self, lr, grad, batch_size):
-        return -lr * grad / batch_size
+    def relax(self, lr, grad):
+        self.grad_plain_sum = self.beta * self.grad_plain_sum + (1.0 - self.beta) * grad
+        return -lr * self.grad_plain_sum
 
 
 class NesterovOptimization(Optimization):
     def __init__(self, beta=0):
         self.beta = beta
 
-        self.last_grad = np.zeros(2)
+        self.grad_plain_sum = np.zeros(2)
 
     def gradient(self, ab, point, error):
-        return self.beta * self.last_grad + \
-               (1.0 - self.beta) * \
-               error.gradient(ab, np.array(
-                   [point[0] - self.beta * self.last_grad[0], point[1] - self.beta * self.last_grad[1]]))
+        return error.gradient(
+            ab,
+            np.array([point[0] - self.beta * self.grad_plain_sum[0], point[1] - self.beta * self.grad_plain_sum[1]])
+        )
 
-    def relax(self, lr, grad, batch_size):
-        return -lr * grad / batch_size
+    def relax(self, lr, grad):
+        self.grad_plain_sum = self.beta * self.grad_plain_sum + (1.0 - self.beta) * grad
+
+        return -lr * self.grad_plain_sum
 
 
 class AdaGradOptimization(Optimization):
-    def __init__(self, eps=1e-10):
+    def __init__(self, eps=1e-5):
         self.eps = eps
 
-        self.s = np.zeros(2)
+        self.grad_square_sum = np.zeros(2)
 
     def gradient(self, ab, point, error):
-        grad = error.gradient(ab, point)
-        self.s += grad ** 2
+        return error.gradient(ab, point)
 
-        return grad
+    def relax(self, lr, grad):
+        self.grad_square_sum += grad ** 2
 
-    def relax(self, lr, grad, batch_size):
-        return -lr / (np.sqrt(self.s) + self.eps) * grad / batch_size
+        return -lr / (np.sqrt(self.grad_square_sum) + self.eps) * grad
 
 
 class RMSPropOptimization(Optimization):
-    def __init__(self, gamma, eps=1e-10):
+    def __init__(self, gamma=0.0, eps=1e-5):
         self.gamma = gamma
         self.eps = eps
 
-        self.s = 0.0
+        self.grad_square_plain_sum = np.zeros(2)
 
     def gradient(self, ab, point, error):
-        grad = error.gradient(ab, point)
-        self.s += self.gamma * self.s + (1.0 - self.gamma) * grad ** 2
+        return error.gradient(ab, point)
 
-        return grad
+    def relax(self, lr, grad):
+        self.grad_square_plain_sum = self.gamma * self.grad_square_plain_sum + \
+                                     (1.0 - self.gamma) * grad ** 2
 
-    def relax(self, lr, grad, batch_size):
-        return -lr / (np.sqrt(self.s) + self.eps) * grad / batch_size
+        return -lr / (np.sqrt(self.grad_square_plain_sum) + self.eps) * grad
 
 
 class AdamOptimization(Optimization):
-    def __init__(self, beta_1, beta_2, eps=1e-10):
+    def __init__(self, beta_1=0.9, beta_2=0.999, eps=1e-5):
         self.beta_1 = beta_1
         self.beta_2 = beta_2
         self.eps = eps
 
-    def gradient(self, ab, point, error):
-        pass
+        self.grad_plain_sum = np.zeros(2)
+        self.grad_square_plain_sum = np.zeros(2)
 
-    def relax(self, lr, grad, batch_size):
-        pass
+        self.iteration = 0
+
+    def gradient(self, ab, point, error):
+        return error.gradient(ab, point)
+
+    def relax(self, lr, grad):
+        self.iteration += 1
+
+        self.grad_plain_sum = self.beta_1 * self.grad_plain_sum + (1.0 - self.beta_1) * grad
+        self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + \
+                                     (1 - self.beta_2) * grad ** 2
+
+        grad_plain_sum_norm = self.grad_plain_sum / (1.0 - np.power(self.beta_1, (self.iteration - 1)) + self.eps)
+        grad_square_plain_sum_norm = self.grad_square_plain_sum / (1.0 - np.power(self.beta_2, (self.iteration - 1)) + self.eps)
+
+        return -lr / (np.sqrt(grad_square_plain_sum_norm) + self.eps) * grad_plain_sum_norm
