@@ -11,6 +11,7 @@ from HW2.optimization import DefaultOptimization, Optimization
 def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
+    # TODO: OS-dependent
     return mem_info.rss + mem_info.vms + mem_info.shared
 
 
@@ -83,7 +84,7 @@ def normalised_mini(
         batch_size=1
 ):
     return minibatch_gd(
-        points / np.linalg.norm(points),
+        points / np.array([np.linalg.norm(points[:, :-1]), 1]),
         error,
         lr,
         ab,
@@ -113,7 +114,9 @@ def minibatch_gd(
 
     meta = {
         "points": np.array([], dtype=np.float64).reshape(0, 2),
-        "before": get_process_memory()
+        "before": get_process_memory(),
+        "gradient_call_count": 0,
+        "function_call_count": 0
     }
 
     for i in range(iterations):
