@@ -35,7 +35,7 @@ def calc_rmse(_ab, _points):
 
 
 def calc_logcosh(_ab, _points):
-    return np.mean(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
+    return np.sum(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
 
 
 def gd(
