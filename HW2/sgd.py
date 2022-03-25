@@ -12,7 +12,7 @@ def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     # TODO: OS-dependent
-    return mem_info.rss + mem_info.vms  # + mem_info.shared
+    return mem_info.rss + mem_info.vms + mem_info.shared
 
 
 def calc_smape(_ab, _points):
@@ -24,6 +24,18 @@ def calc_smape(_ab, _points):
         else:
             smape += np.abs(y_pr - _point[-1]) / (np.abs(y_pr) + np.abs(_point[-1]))
     return smape / len(_points)
+
+
+def calc_mse(_ab, _points):
+    return SquaredErrorCalculator().general_error(_ab, _points)
+
+
+def calc_rmse(_ab, _points):
+    return np.sqrt(calc_mse(_ab, _points))
+
+
+def calc_logcosh(_ab, _points):
+    return np.mean(np.array([map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points)]))
 
 
 def gd(
@@ -152,5 +164,8 @@ def minibatch_gd(
     meta["maximum-after"] = meta["max"] - meta["before"]
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
     meta['smape'] = calc_smape(ab, points)
+    meta['rsme'] = calc_rmse(ab, points)
+    meta['logcosh'] = calc_logcosh(ab, points)
     meta['iterations'] = meta['gradient_call_count'] / batch_size
+
     return ab, meta
