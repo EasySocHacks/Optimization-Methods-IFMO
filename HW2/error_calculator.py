@@ -8,8 +8,15 @@ class Error(ABC):
     def gradient(self, ab, point):
         pass
 
+    @abstractmethod
+    def general_error(self, ab, points):
+        pass
+
 
 class AbsErrorCalculator(Error):
+    def general_error(self, ab, points):
+        return np.mean(map(lambda p: np.abs(ab[0] * p[0] + ab[1] - p[1]), points))
+
     def gradient(self, ab, point):
         dif = ab[0] * point[0] + ab[1] - point[1]
         gr_a, gr_b = np.sign(dif) * point[0], np.sign(dif)
@@ -18,6 +25,9 @@ class AbsErrorCalculator(Error):
 
 
 class SquaredErrorCalculator(Error):
+    def general_error(self, ab, points):
+        return np.mean(map(lambda p: np.square(ab[0] * p[0] + ab[1] - p[1]), points))
+
     def gradient(self, ab, point):
         dif = ab[0] * point[0] + ab[1] - point[1]
         gr_a, gr_b = 2 * dif * point[0], 2 * dif
@@ -26,6 +36,8 @@ class SquaredErrorCalculator(Error):
 
 
 class BoxErrorCalculator(Error):
+    def general_error(self, ab, points):
+        return np.mean(map(lambda p: (ab[0] * p[0] + ab[1] - p[1]) ** 4, points))
 
     def gradient(self, ab, point):
         dif = ab[0] * point[0] + ab[1] - point[1]

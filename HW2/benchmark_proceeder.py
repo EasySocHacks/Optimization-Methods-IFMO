@@ -52,4 +52,4 @@ class BenchmarkStorage:
         return np.array([self.configs[index], np.mean(self.benchmark_results[index]['time']),
                          format_bytes(np.mean(self.benchmark_results[index]['mem'])),
                          np.mean(self.benchmark_results[index]['smape']),
-                         np.mean(self.benchmark_results[index]['gradient_calls'])])
+                         np.mean(self.benchmark_results[index]['gradient_calls'])], dtype=object)
