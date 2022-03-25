@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import psutil
+from scipy import stats
 
 from HW2.error_calculator import SquaredErrorCalculator, Error
 from HW2.optimization import DefaultOptimization, Optimization
@@ -12,7 +13,7 @@ def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     # TODO: OS-dependent
-    return mem_info.rss + mem_info.vms + mem_info.shared
+    return mem_info.rss + mem_info.vms  # + mem_info.shared
 
 
 def calc_smape(_ab, _points):
@@ -35,7 +36,8 @@ def calc_rmse(_ab, _points):
 
 
 def calc_logcosh(_ab, _points):
-    return np.sum(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
+    return np.mean(
+        np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
 
 
 def gd(
@@ -84,7 +86,7 @@ def sgd(
     )
 
 
-def scaled_mini(
+def normalised_mini(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
@@ -94,9 +96,9 @@ def scaled_mini(
         eps=5e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1,
-        point_scale=1
 ):
-    scales_points = points * np.array([point_scale, 1])
+    # scales_points = points / np.linalg.norm(points, axis=0)
+    scales_points = points / np.array([stats.boxcox(points[:, 0])[0], 1])
 
     return minibatch_gd(
         scales_points,

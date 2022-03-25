@@ -21,8 +21,8 @@ def visualize_line(ab, points, rate=100):
     max_x = np.max(np.abs(points[:, 0]))
     max_y = np.max(np.abs(points[:, 1]))
 
-    scale = max(max_x, max_y)
-
+    #scale = max(max_x, max_y)
+    scale = max_x
     xs = np.linspace(-scale, scale, rate)
     ys = f(xs)
 
