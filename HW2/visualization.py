@@ -1,6 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+from HW2.error_calculator import SquaredErrorCalculator
+
 
 def visualize_regression_point(f, points, scale=10, rate=100):
     xs = np.linspace(-scale, scale, rate)
@@ -26,7 +28,7 @@ def visualize_line(ab, points=None, scale=10, rate=100):
     plt.show()
 
 
-def draw_levels(error, generated_points, grad_points=None, rate=100):
+def draw_levels(generated_points, grad_points=None, rate=100, error=SquaredErrorCalculator()):
     scale_x = np.max(np.abs(grad_points[:, 0]))
     scale_y = np.max(np.abs(grad_points[:, 1]))
 
