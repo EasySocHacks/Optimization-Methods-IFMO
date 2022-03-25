@@ -42,7 +42,6 @@ def draw_levels(error, generated_points, grad_points=None, rate=100):
 
     Z = Z.reshape((rate, rate))
 
-
     XS = np.array([])
     YS = np.array([])
 
@@ -55,6 +54,8 @@ def draw_levels(error, generated_points, grad_points=None, rate=100):
                       levels=sorted(
                           [error.general_error(np.array([p[0], p[1]]), generated_points) for p in
                            grad_points] + list(np.linspace(-10, 10, 100))))
-    ax_levels.plot(XS, YS, 'r')
+
+    ax_levels.plot(XS, YS, "r")
+    ax_levels.plot([grad_points[-1, 0]], [grad_points[-1, 1]], 'b.', markersize=20)
 
     plt.show()

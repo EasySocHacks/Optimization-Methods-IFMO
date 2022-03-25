@@ -103,10 +103,6 @@ class AdamOptimization(Optimization):
         self.iteration += 1
 
         self.grad_plain_sum = self.beta_1 * self.grad_plain_sum + (1.0 - self.beta_1) * grad
-        self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + \
-                                     (1 - self.beta_2) * grad ** 2
+        self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + (1 - self.beta_2) * grad ** 2
 
-        grad_plain_sum_norm = self.grad_plain_sum / (1.0 - np.power(self.beta_1, (self.iteration - 1)) + self.eps)
-        grad_square_plain_sum_norm = self.grad_square_plain_sum / (1.0 - np.power(self.beta_2, (self.iteration - 1)) + self.eps)
-
-        return -lr / (np.sqrt(grad_square_plain_sum_norm) + self.eps) * grad_plain_sum_norm
+        return -lr / (np.sqrt(self.grad_square_plain_sum) + self.eps) * self.grad_plain_sum
