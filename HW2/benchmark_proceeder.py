@@ -30,7 +30,8 @@ class BenchmarkStorage:
             "mem": [],
             "smape": [],
             "gradient_calls": [],
-            "rmse": [],
+            "iterations": [],
+            "rsme": [],
             "logcosh": []
         })
         return len(self.configs) - 1
@@ -41,12 +42,12 @@ class BenchmarkStorage:
         self.benchmark_results[index]['smape'].append(benchmark_result['smape'])
         self.benchmark_results[index]['gradient_calls'].append(benchmark_result['gradient_call_count'])
         self.benchmark_results[index]['iterations'].append(benchmark_result['iterations'])
-        self.benchmark_results[index]['rmse'].append(benchmark_result['rsme'])
+        self.benchmark_results[index]['rsme'].append(benchmark_result['rsme'])
         self.benchmark_results[index]['logcosh'].append(benchmark_result['logcosh'])
 
     def get_benchmark_results(self, index):
         config_name = self.configs[index]
-        return 'Benchmark results for config <{}>:\nMean time:{}\nMean memory:{}\nMean SMAPE value:{}\nMean RMSE value:{}\nMean logcosh value:{}\nMean gradient calls:{}\nIterations done:{}'.format(
+        return 'Benchmark results for config <{}>:\nMean time:{}\nMean memory:{}\nMean SMAPE value:{}\nMean RSME value:{}\nMean logcosh value:{}\nMean gradient calls:{}\nIterations done:{}'.format(
             config_name,
             np.mean(self.benchmark_results[index]['time']),
             format_bytes(np.mean(self.benchmark_results[index]['mem'])),

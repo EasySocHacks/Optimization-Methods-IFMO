@@ -35,7 +35,7 @@ def calc_rmse(_ab, _points):
 
 
 def calc_logcosh(_ab, _points):
-    return np.mean(np.array([map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points)]))
+    return np.mean(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
 
 
 def gd(
@@ -45,7 +45,7 @@ def gd(
         ab=None,
         iterations=10000,
         check_batch=50,
-        eps=1e-5,
+        eps=5e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -65,10 +65,10 @@ def sgd(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
+        ab=None,
         iterations=10000,
         check_batch=50,
-        eps=1e-5,
+        eps=5e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -88,10 +88,10 @@ def scaled_mini(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
+        ab=None,
         iterations=10000,
         check_batch=50,
-        eps=1e-5,
+        eps=5e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1,
         point_scale=1
@@ -118,13 +118,17 @@ def minibatch_gd(
         ab=None,
         iterations=10000,
         check_batch=50,
-        eps=1e-5,
+        eps=5e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1
 ):
-    if ab is None:
-        ab = np.array([1.0 / len(points), 1.0 / len(points)])
     n = points.shape[0]
+    if ab is None:
+        ab = np.array([
+            np.random.uniform(-1.0 / 2.0 / n, 1.0 / 2.0 / n),
+            np.random.uniform(-1.0 / 2.0 / n, 1.0 / 2.0 / n)
+        ])
+
     start_time = datetime.datetime.now()
 
     meta = {
