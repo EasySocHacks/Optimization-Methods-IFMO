@@ -23,6 +23,12 @@ class AbsErrorCalculator(Error):
         norm = (gr_a ** 2 + gr_b ** 2) ** 0.5
         return np.array([gr_a / norm, gr_b / norm])
 
+    def __str__(self):
+        return 'Absolute error calculator'
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class SquaredErrorCalculator(Error):
     def general_error(self, ab, points):
@@ -34,6 +40,12 @@ class SquaredErrorCalculator(Error):
         norm = (gr_a ** 2 + gr_b ** 2) ** 0.5
         return np.array([gr_a / norm, gr_b / norm])
 
+    def __str__(self):
+        return 'Squared error calculator'
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class BoxErrorCalculator(Error):
     def general_error(self, ab, points):
@@ -44,3 +56,9 @@ class BoxErrorCalculator(Error):
         gr_a, gr_b = 4 * (dif ** 3) * point[0], 4 * (dif ** 3)
         norm = (gr_a ** 2 + gr_b ** 2) ** 0.5
         return np.array([gr_a / norm, gr_b / norm])
+
+    def __str__(self):
+        return 'Boxed error calculator'
+
+    def __repr__(self):
+        return self.__str__()

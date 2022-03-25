@@ -38,6 +38,7 @@ class BenchmarkStorage:
         self.benchmark_results[index]['mem'].append(benchmark_result['maximum-after'])
         self.benchmark_results[index]['smape'].append(benchmark_result['smape'])
         self.benchmark_results[index]['gradient_calls'].append(benchmark_result['gradient_call_count'])
+        self.benchmark_results[index]['iterations'].append(benchmark_result['iterations'])
 
     def get_benchmark_results(self, index):
         config_name = self.configs[index]
@@ -46,10 +47,12 @@ class BenchmarkStorage:
             np.mean(self.benchmark_results[index]['time']),
             format_bytes(np.mean(self.benchmark_results[index]['mem'])),
             np.mean(self.benchmark_results[index]['smape']),
-            np.mean(self.benchmark_results[index]['gradient_calls']))
+            np.mean(self.benchmark_results[index]['gradient_calls']),
+            np.mean(self.benchmark_results[index]['iterations']))
 
     def get_benchmark_results_arrayed(self, index):
         return np.array([self.configs[index], np.mean(self.benchmark_results[index]['time']),
                          format_bytes(np.mean(self.benchmark_results[index]['mem'])),
                          np.mean(self.benchmark_results[index]['smape']),
-                         np.mean(self.benchmark_results[index]['gradient_calls'])], dtype=object)
+                         np.mean(self.benchmark_results[index]['gradient_calls']),
+                         np.mean(self.benchmark_results[index]['iterations'])], dtype=object)

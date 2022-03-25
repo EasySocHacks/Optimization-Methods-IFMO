@@ -20,6 +20,12 @@ class DefaultOptimization(Optimization):
     def relax(self, lr, grad):
         return -lr * grad
 
+    def __str__(self):
+        return 'Default(no) optimization'
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class MomentumOptimization(Optimization):
     def __init__(self, beta=0):
@@ -33,6 +39,12 @@ class MomentumOptimization(Optimization):
     def relax(self, lr, grad):
         self.grad_plain_sum = self.beta * self.grad_plain_sum + (1.0 - self.beta) * grad
         return -lr * self.grad_plain_sum
+
+    def __str__(self):
+        return 'Momentum optimization (beta={})'.format(self.beta)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class NesterovOptimization(Optimization):
@@ -52,6 +64,12 @@ class NesterovOptimization(Optimization):
 
         return -lr * self.grad_plain_sum
 
+    def __str__(self):
+        return 'Nesterov optimization (beta={})'.format(self.beta)
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class AdaGradOptimization(Optimization):
     def __init__(self, eps=1e-5):
@@ -66,6 +84,12 @@ class AdaGradOptimization(Optimization):
         self.grad_square_sum += grad ** 2
 
         return -lr / (np.sqrt(self.grad_square_sum) + self.eps) * grad
+
+    def __str__(self):
+        return 'Ada gradient optimization (eps={})'.format(self.eps)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class RMSPropOptimization(Optimization):
@@ -83,6 +107,12 @@ class RMSPropOptimization(Optimization):
                                      (1.0 - self.gamma) * grad ** 2
 
         return -lr / (np.sqrt(self.grad_square_plain_sum) + self.eps) * grad
+
+    def __str__(self):
+        return 'RMS prop optimization (gamma={}, eps={})'.format(self.gamma, self.eps)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class AdamOptimization(Optimization):
@@ -103,6 +133,13 @@ class AdamOptimization(Optimization):
         self.iteration += 1
 
         self.grad_plain_sum = self.beta_1 * self.grad_plain_sum + (1.0 - self.beta_1) * grad
-        self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + (1 - self.beta_2) * grad ** 2
+        self.grad_square_plain_sum = self.beta_2 * self.grad_square_plain_sum + \
+                                     (1 - self.beta_2) * grad ** 2
 
         return -lr / (np.sqrt(self.grad_square_plain_sum) + self.eps) * self.grad_plain_sum
+
+    def __str__(self):
+        return 'Adam optimization (beta_1={}, beta_2={}, eps={})'.format(self.beta_1, self.beta_2, self.eps)
+
+    def __repr__(self):
+        return self.__str__()

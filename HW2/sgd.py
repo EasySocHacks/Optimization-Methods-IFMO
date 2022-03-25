@@ -135,12 +135,7 @@ def minibatch_gd(
                 break
 
         ab_grad = np.zeros(2)
-
         rand_points = np.random.permutation(points)[:batch_size]
-        # while len(rand_points) > batch_size:
-        #     pid = np.random.randint(0, len(rand_points))
-        #     rand_points[pid], rand_points[-1] = rand_points[-1], rand_points[pid]
-        #     rand_points = np.resize(rand_points, (len(rand_points) - 1, 2))
 
         for point in rand_points:
             gradient_a, gradient_b = optimization.gradient(
@@ -157,4 +152,5 @@ def minibatch_gd(
     meta["maximum-after"] = meta["max"] - meta["before"]
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
     meta['smape'] = calc_smape(ab, points)
+    meta['iterations'] = meta['gradient_call_count'] / batch_size
     return ab, meta
