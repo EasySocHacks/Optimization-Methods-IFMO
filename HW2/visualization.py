@@ -25,27 +25,36 @@ def visualize_line(ab, points=None, scale=10, rate=100):
 
     plt.show()
 
-def draw_3D(f, points=None, scale=100, rate=100):
+
+def draw_levels(error, generated_points, grad_points=None, rate=100):
+    scale_x = np.max(np.abs(grad_points[:, 0]))
+    scale_y = np.max(np.abs(grad_points[:, 1]))
+
+    scale = max(scale_x, scale_y)
+
     t = np.linspace(-scale, scale, rate)
     X, Y = np.meshgrid(t, t)
-    ax = plt.figure().add_subplot(projection='3d')
-    ax.plot_surface(X, Y, f([X, Y]))
+    Z = np.array([])
 
-    if points is not None:
-        XS = np.array([])
-        YS = np.array([])
-        ZS = points[:, 1]
+    for i in range(rate):
+        for j in range(rate):
+            Z = np.append(Z, error.general_error(np.array([X[i, j], Y[i, j]]), generated_points))
 
-        for point in points[:, 0]:
-            XS = np.append(XS, point[0])
-            YS = np.append(YS, point[1])
+    Z = Z.reshape((rate, rate))
 
-        ax_points = plt.figure().add_subplot(projection='3d')
-        ax_points.scatter(XS, YS, ZS, c='r')
 
-        ax_levels = plt.figure().add_subplot()
-        ax_levels.contour(X, Y, f([X, Y]), levels=sorted(
-            [f([p[0], p[1]]) for p in points[:, 0]] + list(np.linspace(-1, 1, 100))))
-        ax_levels.plot(XS, YS, 'r.')
+    XS = np.array([])
+    YS = np.array([])
+
+    for point in grad_points:
+        XS = np.append(XS, point[0])
+        YS = np.append(YS, point[1])
+
+    ax_levels = plt.figure().add_subplot()
+    ax_levels.contour(X, Y, Z,
+                      levels=sorted(
+                          [error.general_error(np.array([p[0], p[1]]), generated_points) for p in
+                           grad_points] + list(np.linspace(-10, 10, 100))))
+    ax_levels.plot(XS, YS, 'r')
 
     plt.show()
