@@ -12,7 +12,7 @@ def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     # TODO: OS-dependent
-    return mem_info.rss + mem_info.vms + mem_info.shared
+    return mem_info.rss + mem_info.vms  # + mem_info.shared
 
 
 def calc_smape(_ab, _points):
@@ -30,7 +30,7 @@ def gd(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=np.array([np.random.uniform(-100, 100), np.random.uniform(-100, 100)]),
+        ab=None,
         iterations=10000,
         check_batch=50,
         eps=1e-5,
@@ -132,16 +132,20 @@ def minibatch_gd(
                 break
 
         ab_grad = np.zeros(2)
-        for _ in range(batch_size):
-            pid = np.random.randint(0, n)
-            point = points[pid]
 
+        rand_points = np.random.permutation(points)[:batch_size]
+        # while len(rand_points) > batch_size:
+        #     pid = np.random.randint(0, len(rand_points))
+        #     rand_points[pid], rand_points[-1] = rand_points[-1], rand_points[pid]
+        #     rand_points = np.resize(rand_points, (len(rand_points) - 1, 2))
+
+        for point in rand_points:
             gradient_a, gradient_b = optimization.gradient(
                 ab,
                 point,
                 error
             )
-
+            meta['gradient_call_count'] += 1
             ab_grad += np.array([gradient_a, gradient_b])
 
         ab += optimization.relax(lr, ab_grad / batch_size)
