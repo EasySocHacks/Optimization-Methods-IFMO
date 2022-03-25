@@ -72,7 +72,7 @@ def sgd(
     )
 
 
-def normalised_mini(
+def scaled_mini(
         points,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
@@ -81,10 +81,13 @@ def normalised_mini(
         check_batch=50,
         eps=1e-5,
         optimization: Optimization = DefaultOptimization(),
-        batch_size=1
+        batch_size=1,
+        point_scale=1
 ):
+    scales_points = points * np.array([point_scale, 1])
+
     return minibatch_gd(
-        points / np.array([np.linalg.norm(points[:, :-1]), 1]),
+        scales_points,
         error,
         lr,
         ab,
@@ -93,7 +96,7 @@ def normalised_mini(
         eps,
         optimization,
         batch_size
-    )
+    ), scales_points
 
 
 def minibatch_gd(

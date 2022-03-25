@@ -20,11 +20,11 @@ class BenchmarkStorage:
         self.benchmark_results = []
         self.configs = []
 
-    def add_benchmark_config(self, batch_size: str = 'sgd', normalized: bool = False,
+    def add_benchmark_config(self, batch_size: str = 'sgd', scale: float = 1,
                              optimiser: Optimization = DefaultOptimization(),
                              error: Error = SquaredErrorCalculator()
                              ):
-        self.configs.append((batch_size, normalized, optimiser, error))
+        self.configs.append((batch_size, scale, optimiser, error))
         self.benchmark_results.append({
             "time": [],
             "mem": [],
