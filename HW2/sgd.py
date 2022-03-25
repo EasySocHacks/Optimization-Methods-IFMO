@@ -35,7 +35,7 @@ def calc_rmse(_ab, _points):
 
 
 def calc_logcosh(_ab, _points):
-    return np.mean(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
+    return np.sum(np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
 
 
 def gd(
@@ -168,7 +168,7 @@ def minibatch_gd(
     meta["maximum-after"] = meta["max"] - meta["before"]
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
     meta['smape'] = calc_smape(ab, points)
-    meta['rsme'] = calc_rmse(ab, points)
+    meta['rmse'] = calc_rmse(ab, points)
     meta['logcosh'] = calc_logcosh(ab, points)
     meta['iterations'] = meta['gradient_call_count'] / batch_size
 
