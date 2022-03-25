@@ -168,7 +168,7 @@ def minibatch_gd(
     meta["maximum-after"] = meta["max"] - meta["before"]
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
     meta['smape'] = calc_smape(ab, points)
-    meta['rsme'] = calc_rmse(ab, points)
+    meta['rmse'] = calc_rmse(ab, points)
     meta['logcosh'] = calc_logcosh(ab, points)
     meta['iterations'] = meta['gradient_call_count'] / batch_size
 
