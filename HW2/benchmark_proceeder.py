@@ -42,7 +42,7 @@ class BenchmarkStorage:
 
     def get_benchmark_results(self, index):
         config_name = self.configs[index]
-        return 'Benchmark results for config <{}>:\n\tMean time:{}\n\tMean memory:{}\n\tMean SMAPE value:{}\nMean gradient calls:{}'.format(
+        return 'Benchmark results for config <{}>:\nMean time:{}\nMean memory:{}\nMean SMAPE value:{}\nMean gradient calls:{}\nIterations done:{}'.format(
             config_name,
             np.mean(self.benchmark_results[index]['time']),
             format_bytes(np.mean(self.benchmark_results[index]['mem'])),
