@@ -14,9 +14,14 @@ def visualize_regression_point(f, points, scale=10, rate=100):
     plt.show()
 
 
-def visualize_line(ab, points=None, scale=10, rate=100):
+def visualize_line(ab, points, rate=100):
     def f(x):
         return ab[0] * x + ab[1]
+
+    max_x = np.max(np.abs(points[:, 0]))
+    max_y = np.max(np.abs(points[:, 1]))
+
+    scale = max(max_x, max_y)
 
     xs = np.linspace(-scale, scale, rate)
     ys = f(xs)
