@@ -30,6 +30,7 @@ class BenchmarkStorage:
             "mem": [],
             "smape": [],
             "gradient_calls": [],
+            "iterations": [],
             "rmse": [],
             "logcosh": []
         })
@@ -41,7 +42,7 @@ class BenchmarkStorage:
         self.benchmark_results[index]['smape'].append(benchmark_result['smape'])
         self.benchmark_results[index]['gradient_calls'].append(benchmark_result['gradient_call_count'])
         self.benchmark_results[index]['iterations'].append(benchmark_result['iterations'])
-        self.benchmark_results[index]['rmse'].append(benchmark_result['rsme'])
+        self.benchmark_results[index]['rmse'].append(benchmark_result['rmse'])
         self.benchmark_results[index]['logcosh'].append(benchmark_result['logcosh'])
 
     def get_benchmark_results(self, index):
@@ -51,7 +52,7 @@ class BenchmarkStorage:
             np.mean(self.benchmark_results[index]['time']),
             format_bytes(np.mean(self.benchmark_results[index]['mem'])),
             np.mean(self.benchmark_results[index]['smape']),
-            np.mean(self.benchmark_results[index]['rsme']),
+            np.mean(self.benchmark_results[index]['rmse']),
             np.mean(self.benchmark_results[index]['logcosh']),
             np.mean(self.benchmark_results[index]['gradient_calls']),
             np.mean(self.benchmark_results[index]['iterations']))
@@ -60,7 +61,7 @@ class BenchmarkStorage:
         return np.array([self.configs[index], np.mean(self.benchmark_results[index]['time']),
                          format_bytes(np.mean(self.benchmark_results[index]['mem'])),
                          np.mean(self.benchmark_results[index]['smape']),
-                         np.mean(self.benchmark_results[index]['rsme']),
+                         np.mean(self.benchmark_results[index]['rmse']),
                          np.mean(self.benchmark_results[index]['logcosh']),
                          np.mean(self.benchmark_results[index]['gradient_calls']),
                          np.mean(self.benchmark_results[index]['iterations'])], dtype=object)
