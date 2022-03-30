@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import psutil
-from scipy import stats
 
 from HW2.error_calculator import SquaredErrorCalculator, Error
 from HW2.optimization import DefaultOptimization, Optimization
@@ -13,7 +12,7 @@ def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     # TODO: OS-dependent
-    return mem_info.rss + mem_info.vms  # + mem_info.shared
+    return mem_info.rss + mem_info.vms + mem_info.shared
 
 
 def calc_smape(_ab, _points):
