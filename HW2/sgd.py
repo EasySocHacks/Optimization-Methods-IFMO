@@ -15,12 +15,8 @@ def get_process_memory():
     return mem_info.rss + mem_info.vms + mem_info.shared
 
 
-def scalar(_ab, _point):
-    result = 0.0
-    for i in range(len(_point)):
-        result += _ab[i] * _point[i]
-    result += _ab[-1]
-    return result
+def scalar(w, point):
+    return np.sum(w[:-1] * point) + w[-1]
 
 
 def calc_smape(_ab, _points):
@@ -54,7 +50,7 @@ def gd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -77,7 +73,7 @@ def sgd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -101,7 +97,7 @@ def scaled_mini(
         iterations=10000,
         check_batch=50,
         scale=1,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1,
 ):
@@ -127,7 +123,7 @@ def minibatch_gd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1
 ):
@@ -154,8 +150,10 @@ def minibatch_gd(
 
         if meta["points"].shape[0] > check_batch:
             avg_changes = np.average(
-                np.abs(np.average(
-                    np.average(meta["points"][-check_batch:-1, 1], axis=0) - meta["points"][-check_batch:-1, 1])))
+                np.average(np.abs(
+                    np.average(meta["points"][-check_batch:-1, :], axis=0) - meta["points"][-check_batch:-1, :]),
+                    axis=0
+                ))
             if avg_changes < eps:
                 break
 

@@ -3,12 +3,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-def scalar(_ab, _point):
-    result = 0.0
-    for i in range(len(_point)):
-        result += _ab[i] * _point[i]
-    result += _ab[-1]
-    return result
+def scalar(w, point):
+    return np.sum(w[:-1] * point) + w[-1]
 
 
 class Error(ABC):
