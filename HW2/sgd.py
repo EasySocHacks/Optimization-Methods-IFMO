@@ -11,16 +11,11 @@ from HW2.optimization import DefaultOptimization, Optimization
 def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
-    # TODO: OS-dependent
     return mem_info.rss + mem_info.vms + mem_info.shared
 
 
-def scalar(_ab, _point):
-    result = 0.0
-    for i in range(len(_point)):
-        result += _ab[i] * _point[i]
-    result += _ab[-1]
-    return result
+def scalar(w, point):
+    return np.sum(w[:-1] * point) + w[-1]
 
 
 def calc_smape(_ab, _points):
@@ -154,8 +149,10 @@ def minibatch_gd(
 
         if meta["points"].shape[0] > check_batch:
             avg_changes = np.average(
-                np.abs(np.average(
-                    np.average(meta["points"][-check_batch:-1, 1], axis=0) - meta["points"][-check_batch:-1, 1])))
+                np.average(np.abs(
+                    np.average(meta["points"][-check_batch:-1, :], axis=0) - meta["points"][-check_batch:-1, :]),
+                    axis=0
+                ))
             if avg_changes < eps:
                 break
 

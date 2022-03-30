@@ -4,9 +4,12 @@ from matplotlib import pyplot as plt
 from HW2.error_calculator import SquaredErrorCalculator
 
 
-def visualize_regression_point(f, points, scale=10, rate=100):
+def visualize_regression_point(f, points, scale=100, rate=100):
     xs = np.linspace(-scale, scale, rate)
-    ys = f(xs)
+    ys = np.array([])
+
+    for x in xs:
+        ys = np.append(ys, f(np.array([x])))
 
     plt.plot(points[:, 0], points[:, 1], 'r.')
     plt.plot(xs, ys)
