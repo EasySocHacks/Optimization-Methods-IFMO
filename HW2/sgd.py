@@ -49,7 +49,7 @@ def gd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -72,7 +72,7 @@ def sgd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
 ):
     return minibatch_gd(
@@ -96,7 +96,7 @@ def scaled_mini(
         iterations=10000,
         check_batch=50,
         scale=1,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1,
 ):
@@ -122,7 +122,7 @@ def minibatch_gd(
         lr=0.1,
         iterations=10000,
         check_batch=50,
-        eps=5e-2,
+        eps=8e-2,
         optimization: Optimization = DefaultOptimization(),
         batch_size=1
 ):
