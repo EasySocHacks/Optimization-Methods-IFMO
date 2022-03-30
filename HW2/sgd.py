@@ -15,10 +15,18 @@ def get_process_memory():
     return mem_info.rss + mem_info.vms + mem_info.shared
 
 
+def scalar(_ab, _point):
+    result = 0.0
+    for i in range(len(_point)):
+        result += _ab[i] * _point[i]
+    result += _ab[-1]
+    return result
+
+
 def calc_smape(_ab, _points):
     smape = 0
     for _point in _points:
-        y_pr = _ab[0] * _point[0] + _ab[1]
+        y_pr = scalar(_ab, _point)
         if y_pr == 0 and _point[-1] == 0:
             smape += 0
         else:
@@ -36,14 +44,14 @@ def calc_rmse(_ab, _points):
 
 def calc_logcosh(_ab, _points):
     return np.mean(
-        np.array(list(map(lambda _point: np.log(np.cosh(_ab[0] * _point[0] + _ab[1] - _point[1])), _points))))
+        np.array(list(map(lambda _point: np.log(np.cosh(scalar(_ab, _point) - _point[1])), _points))))
 
 
 def gd(
         points,
+        start_point=None,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=None,
         iterations=10000,
         check_batch=50,
         eps=5e-2,
@@ -51,9 +59,9 @@ def gd(
 ):
     return minibatch_gd(
         points,
+        start_point,
         error,
         lr,
-        ab,
         iterations,
         check_batch,
         eps,
@@ -64,9 +72,9 @@ def gd(
 
 def sgd(
         points,
+        start_point=None,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=None,
         iterations=10000,
         check_batch=50,
         eps=5e-2,
@@ -74,9 +82,9 @@ def sgd(
 ):
     return minibatch_gd(
         points,
+        start_point,
         error,
         lr,
-        ab,
         iterations,
         check_batch,
         eps,
@@ -87,9 +95,9 @@ def sgd(
 
 def scaled_mini(
         points,
+        start_point=None,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=None,
         iterations=10000,
         check_batch=50,
         scale=1,
@@ -101,9 +109,9 @@ def scaled_mini(
     scaled_points = points * np.array([1, scale])
     return minibatch_gd(
         scaled_points,
+        start_point,
         error,
         lr,
-        ab,
         iterations,
         check_batch,
         eps,
@@ -114,9 +122,9 @@ def scaled_mini(
 
 def minibatch_gd(
         points,
+        start_point=None,
         error: Error = SquaredErrorCalculator(),
         lr=0.1,
-        ab=None,
         iterations=10000,
         check_batch=50,
         eps=5e-2,
@@ -124,16 +132,15 @@ def minibatch_gd(
         batch_size=1
 ):
     n = points.shape[0]
-    if ab is None:
-        ab = np.array([
-            np.random.uniform(-1.0 / 2.0 / n, 1.0 / 2.0 / n),
-            np.random.uniform(-1.0 / 2.0 / n, 1.0 / 2.0 / n)
-        ])
+    dim = points.shape[1]
 
+    if start_point is None:
+        start_point = np.random.uniform(-0.5 / n, 0.5 / n, dim)
+    w = start_point.copy()
     start_time = datetime.datetime.now()
 
     meta = {
-        "points": np.array([], dtype=np.float64).reshape(0, 2),
+        "points": np.array([], dtype=np.float64).reshape(0, dim),
         "before": get_process_memory(),
         "gradient_call_count": 0,
         "function_call_count": 0
@@ -141,36 +148,37 @@ def minibatch_gd(
 
     for i in range(iterations):
         meta["points"] = np.append(
-            meta["points"], ab.reshape(1, 2),
+            meta["points"], w.reshape(1, dim),
             axis=0
         )
 
         if meta["points"].shape[0] > check_batch:
             avg_changes = np.average(
-                np.abs(np.average(meta["points"][-check_batch:-1, 1]) - meta["points"][-check_batch:-1, 1]))
+                np.abs(np.average(
+                    np.average(meta["points"][-check_batch:-1, 1], axis=0) - meta["points"][-check_batch:-1, 1])))
             if avg_changes < eps:
                 break
 
-        ab_grad = np.zeros(2)
+        ab_grad = np.zeros(dim)
         rand_points = np.random.permutation(points)[:batch_size]
 
         for point in rand_points:
-            gradient_a, gradient_b = optimization.gradient(
-                ab,
+            gradient = optimization.gradient(
+                w,
                 point,
                 error
             )
             meta['gradient_call_count'] += 1
-            ab_grad += np.array([gradient_a, gradient_b])
+            ab_grad += gradient
 
-        ab += optimization.relax(lr, ab_grad / batch_size)
+        w += optimization.relax(lr, ab_grad / batch_size)
 
     meta["max"] = get_process_memory()
     meta["maximum-after"] = meta["max"] - meta["before"]
     meta['time'] = (datetime.datetime.now() - start_time).total_seconds()
-    meta['smape'] = calc_smape(ab, points)
-    meta['rmse'] = calc_rmse(ab, points)
-    meta['logcosh'] = calc_logcosh(ab, points)
+    meta['smape'] = calc_smape(w, points)
+    meta['rmse'] = calc_rmse(w, points)
+    meta['logcosh'] = calc_logcosh(w, points)
     meta['iterations'] = meta['gradient_call_count'] / batch_size
 
-    return ab, meta
+    return w, meta
