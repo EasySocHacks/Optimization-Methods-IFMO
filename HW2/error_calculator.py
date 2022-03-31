@@ -4,7 +4,7 @@ import numpy as np
 
 
 def scalar(w, point):
-    return np.sum(w[:-1] * point) + w[-1]
+    return np.sum(w[:-1] * point[:-1]) + w[-1]
 
 
 class Error(ABC):

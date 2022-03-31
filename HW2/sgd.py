@@ -15,7 +15,7 @@ def get_process_memory():
 
 
 def scalar(w, point):
-    return np.sum(w[:-1] * point) + w[-1]
+    return np.sum(w[:-1] * point[:-1]) + w[-1]
 
 
 def calc_smape(_ab, _points):
@@ -100,7 +100,6 @@ def scaled_mini(
         optimization: Optimization = DefaultOptimization(),
         batch_size=1,
 ):
-    # ERROR = F(y_predicted, y_real)
     scaled_points = points * np.append(np.ones(points.shape[1] - 1), scale)
     return minibatch_gd(
         scaled_points,
