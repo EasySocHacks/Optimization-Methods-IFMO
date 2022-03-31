@@ -11,7 +11,7 @@ from HW2.optimization import DefaultOptimization, Optimization
 def get_process_memory():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
-    return mem_info.rss + mem_info.vms + mem_info.shared
+    return mem_info.rss + mem_info.vms  # + mem_info.shared
 
 
 def scalar(w, point):
@@ -39,7 +39,7 @@ def calc_rmse(_ab, _points):
 
 def calc_logcosh(_ab, _points):
     return np.mean(
-        np.array(list(map(lambda _point: np.log(np.cosh(scalar(_ab, _point) - _point[1])), _points))))
+        np.array(list(map(lambda _point: np.log(np.cosh(scalar(_ab, _point) - _point[-1])), _points))))
 
 
 def gd(
@@ -101,7 +101,7 @@ def scaled_mini(
         batch_size=1,
 ):
     # ERROR = F(y_predicted, y_real)
-    scaled_points = points * np.array([1, scale])
+    scaled_points = points * np.append(np.ones(points.shape[1] - 1), scale)
     return minibatch_gd(
         scaled_points,
         start_point,

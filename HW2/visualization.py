@@ -22,7 +22,7 @@ def visualize_line(ab, points, rate=100):
         return ab[0] * x + ab[1]
 
     max_x = np.max(np.abs(points[:, 0]))
-    max_y = np.max(np.abs(points[:, 1]))
+    max_y = np.max(np.abs(points[:, -1]))
 
     # scale = max(max_x, max_y)
     scale = max_x
@@ -30,7 +30,7 @@ def visualize_line(ab, points, rate=100):
     ys = f(xs)
 
     if points is not None:
-        plt.plot(points[:, 0], points[:, 1], 'r.')
+        plt.plot(points[:, 0], points[:, -1], 'r.')
     plt.plot(xs, ys)
 
     plt.show()
@@ -39,7 +39,7 @@ def visualize_line(ab, points, rate=100):
 # noinspection DuplicatedCode
 def draw_levels(generated_points, grad_points, rate=100, error=SquaredErrorCalculator()):
     scale_x = np.max(np.abs(grad_points[:, 0]))
-    scale_y = np.max(np.abs(grad_points[:, 1]))
+    scale_y = np.max(np.abs(grad_points[:, -1]))
 
     scale = max(scale_x, scale_y)
 
@@ -89,7 +89,7 @@ def draw_multiple_levels(
     grad_points_concat = np.array([])
     for grad_points in grad_points_list:
         scale_x = np.max(np.abs(grad_points[:, 0]))
-        scale_y = np.max(np.abs(grad_points[:, 1]))
+        scale_y = np.max(np.abs(grad_points[:, -1]))
 
         scale_tmp = max(scale_x, scale_y)
         scale = max(scale_tmp, scale)
@@ -109,7 +109,8 @@ def draw_multiple_levels(
     ax_levels.contour(X, Y, Z,
                       levels=np.array(sorted(
                           [error.general_error(np.array([p[0], p[1]]), generated_points) for p in
-                           np.unique(grad_points_concat.reshape((-1, 2)), axis=0)] + list(np.linspace(-10, 10, 100))))[::stride])
+                           np.unique(grad_points_concat.reshape((-1, 2)), axis=0)] + list(np.linspace(-10, 10, 100))))[
+                             ::stride])
 
     for grad_points, label in zip(grad_points_list, label_list):
         rgb = (np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1))
