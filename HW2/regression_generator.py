@@ -20,4 +20,4 @@ def generate_regression(f_scale=1, point_count=100, scale=np.array([10, 5])):
 
     points = points.reshape((point_count, dim))
 
-    return f, points
+    return f, points, f_x
